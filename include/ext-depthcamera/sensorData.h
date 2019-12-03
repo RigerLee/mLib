@@ -1282,7 +1282,7 @@ namespace ml {
 			std::string getCurrent() {
 				std::stringstream ss;
 				ss << m_base;
-				for (unsigned int i = std::max(1u, (unsigned int)std::ceilf(std::log10f((float)m_current + 1))); i < m_numCountDigits; i++) ss << "0";
+				for (unsigned int i = std::max(1u, (unsigned int)std::ceil(std::log10((float)m_current + 1))); i < m_numCountDigits; i++) ss << "0";
 				ss << m_current;
 				ss << m_fileEnding;
 				return ss.str();

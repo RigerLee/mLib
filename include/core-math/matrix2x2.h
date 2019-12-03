@@ -1,7 +1,6 @@
 
 #ifndef CORE_MATH_MATRIX2X2_H_
 #define CORE_MATH_MATRIX2X2_H_
-
 namespace ml {
 
 template <class FloatType>
@@ -345,7 +344,7 @@ public:
 	}
 
 	EigenSystem<FloatType> eigenSystem() const {
-		return EigenSolver<FloatType>::solve<EigenSolver<FloatType>::TYPE_DEFAULT>(*this);
+		return EigenSolver<FloatType>::solve_default(*this);
 	}
 
 protected:

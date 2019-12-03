@@ -1,3 +1,4 @@
+#include <core-graphics/RGBColor.h>
 
 namespace ml
 {

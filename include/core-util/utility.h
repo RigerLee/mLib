@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef CORE_UTIL_UTILITY_H_
 #define CORE_UTIL_UTILITY_H_
 

@@ -1,0 +1,9 @@
+find_library(mLib_LIBRARY mLib
+    PATHS "@CMAKE_INSTALL_PREFIX@/lib"
+)
+find_path(mLib_INCLUDE_DIR mLibConfig.cmake
+    PATHS "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME@" 
+)
+set(mLib_LIBRARIES ${mLib_LIBRARY})
+set(mLib_LIBS ${mLib_LIBRARY})
+set(mLib_INCLUDE_DIRS ${mLib_INCLUDE_DIR})

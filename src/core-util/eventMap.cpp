@@ -23,13 +23,4 @@ void EventMap::dispatchEvents(const vector<std::string> &messages) const
     }
 }
 
-#ifdef _WIN32
-void EventMap::dispatchEvents(ml::UIConnection &ui) const
-{
-	ui.readMessages();
-	dispatchEvents(ui.messages());
-	ui.messages().clear();
-}
-#endif
-
 }

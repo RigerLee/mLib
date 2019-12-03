@@ -98,46 +98,6 @@ std::vector<std::string> Directory::getDirectoriesContaining(const std::string &
 }
 
 
-
-
-
-#ifdef WIN32
-void Directory::init(const std::string &path)
-{
-	m_path = path + "/";
-	m_files.clear();
-	m_directories.clear();
-
-	WIN32_FIND_DATAA findResult;
-
-	HANDLE hFind = FindFirstFileA((path + std::string("\\*")).c_str(), &findResult);
-
-	if (hFind == INVALID_HANDLE_VALUE) return;
-
-	do
-	{
-		if (findResult.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			std::string directoryName(findResult.cFileName);
-			if(!util::startsWith(directoryName, "."))
-			{
-				m_directories.push_back(directoryName);
-			}
-		}
-		else
-		{
-			//FileSize.LowPart = findResult.nFileSizeLow;
-			//FileSize.HighPart = findResult.nFileSizeHigh;
-			m_files.push_back(std::string(findResult.cFileName));
-		}
-	}
-	while (FindNextFileA(hFind, &findResult) != 0);
-
-	FindClose(hFind);
-}
-#endif  // _WIN32
-
-#ifdef LINUX
 void Directory::init(const std::string &path)
 {
     //std::cout << "Loading all files in " << path << std::endl;
@@ -171,6 +131,5 @@ void Directory::init(const std::string &path)
 	
 	closedir(dir);
 }
-#endif  // LINUX
 
 }  // namespace ml

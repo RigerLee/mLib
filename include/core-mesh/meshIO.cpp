@@ -702,10 +702,10 @@ void MeshIO<FloatType>::saveToOBJ( const std::string& filename, const MeshData<F
 
 	for (size_t i = 0; i < mesh.m_Vertices.size(); i++) {
 		file << "v ";
-		if (isnan(mesh.m_Vertices[i].x))	file << "NaN NaN NaN";
+		if (std::isnan(mesh.m_Vertices[i].x))	file << "NaN NaN NaN";
 		else								file << mesh.m_Vertices[i].x << " " << mesh.m_Vertices[i].y << " " << mesh.m_Vertices[i].z;
 		if (mesh.m_Colors.size() > 0) {
-			if (isnan(mesh.m_Colors[i].x))	file << " NaN NaN NaN";
+			if (std::isnan(mesh.m_Colors[i].x))	file << " NaN NaN NaN";
 			else							file << " " << mesh.m_Colors[i].x << " " << mesh.m_Colors[i].y << " " << mesh.m_Colors[i].z;
 		}
 		file << "\n";

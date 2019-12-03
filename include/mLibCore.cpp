@@ -1,9 +1,5 @@
+#pragma once
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-#ifdef LINUX
 #ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
 #endif
@@ -12,7 +8,6 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <dirent.h>
-#endif
 
 //
 // core-base source files
@@ -29,11 +24,8 @@
 // core-util source files
 //
 #include "../src/core-util/utility.cpp"
-#include "../src/core-util/windowsUtil.cpp"
 #include "../src/core-util/directory.cpp"
 #include "../src/core-util/timer.cpp"
-#include "../src/core-util/pipe.cpp"
-#include "../src/core-util/UIConnection.cpp"
 #include "../src/core-util/eventMap.cpp"
 
 //
@@ -52,7 +44,6 @@
 //
 #include "../src/core-mesh/meshUtil.cpp"
 
-#ifdef LINUX
 namespace ml
 {
     template<> const vec3f vec3f::origin(0.0f, 0.0f, 0.0f);
@@ -93,4 +84,3 @@ namespace ml
     template<> const vec1d vec1d::origin(0.0);
     template<> const vec1d vec1d::eX(1.0);
 }
-#endif

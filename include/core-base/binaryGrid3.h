@@ -272,24 +272,6 @@ namespace ml {
 			operator>>(BinaryDataStream<BinaryDataBuffer, BinaryDataCompressor>& s, BinaryGrid3& g);
 	private:
 
-#ifdef _WIN32
-        // boost archive serialization functions
-		friend class boost::serialization::access;
-		template <class Archive>
-		void save(Archive& ar, const unsigned int version) const {
-			ar << m_dimX << m_dimY << m_dimZ << boost::serialization::make_array(m_data, getNumUInts());
-		}
-		template<class Archive>
-		void load(Archive& ar, const unsigned int version) {
-			ar >> m_dimX >> m_dimY >> m_dimZ;
-			allocate(m_dimX, m_dimY, m_dimZ);
-			ar >> boost::serialization::make_array(m_data, getNumUInts());
-		}
-		template<class Archive>
-		void serialize(Archive &ar, const unsigned int version) {
-			boost::serialization::split_member(ar, *this, version);
-		}
-#endif
 
 		inline size_t getNumUInts() const {
 			size_t numEntries = getNumElements();

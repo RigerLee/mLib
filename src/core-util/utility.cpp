@@ -1,3 +1,6 @@
+#include <sys/stat.h>
+#include <dirent.h>
+
 namespace ml {
 
 namespace util
@@ -249,190 +252,6 @@ namespace util
 		rename(oldFilename.c_str(), newFilename.c_str());
 	}
 
-#ifdef WIN32
-	void copyStringToClipboard(const std::string &S)
-	{
-		OpenClipboard(nullptr);
-		EmptyClipboard();
-
-		HGLOBAL globalHandle;
-		size_t bytesToCopy = S.length() + 1;
-		globalHandle = GlobalAlloc(GMEM_MOVEABLE, bytesToCopy);
-		if(globalHandle != nullptr)
-		{
-			BYTE *stringPointer = (BYTE*)GlobalLock(globalHandle); 
-			memcpy(stringPointer, S.c_str(), bytesToCopy); 
-			GlobalUnlock(globalHandle);
-			SetClipboardData(CF_TEXT, globalHandle);
-		}
-		CloseClipboard();
-	}
-
-	std::string loadStringFromClipboard()
-	{
-		std::string result;
-
-		OpenClipboard(nullptr);
-		HGLOBAL globalHandle = GetClipboardData(CF_TEXT);
-		if(globalHandle != nullptr)
-		{
-			const char *stringPointer = (const char *)GlobalLock(globalHandle);
-			if(stringPointer != nullptr)
-			{
-				result = stringPointer;
-				GlobalUnlock(GlobalHandle);
-			}
-		}
-		CloseClipboard();
-
-		return result;
-	}
-
-	UINT64 getFileSize(const std::string &filename)
-	{
-		BOOL success;
-		WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-		success = GetFileAttributesExA(filename.c_str(), GetFileExInfoStandard, (void*)&fileInfo);
-		MLIB_ASSERT_STR(success != 0, std::string("GetFileAttributesEx failed on ") + filename);
-		//return fileInfo.nFileSizeLow + fileInfo.nFileSizeHigh;
-		LARGE_INTEGER size;
-		size.HighPart = fileInfo.nFileSizeHigh;
-		size.LowPart = fileInfo.nFileSizeLow;
-		return size.QuadPart;
-	}
-
-    int runCommand(const std::string& command)
-    {
-        return system(command.c_str());
-    }
-
-	// Create a process with the given command line, and wait until it returns
-	int runCommand(const std::string &executablePath, const std::string& commandLine, bool block)
-	{
-		STARTUPINFOA si;
-		PROCESS_INFORMATION pi;
-
-		ZeroMemory( &si, sizeof(si) );
-		si.cb = sizeof(si);
-		ZeroMemory( &pi, sizeof(pi) );
-
-		std::string fullCommandLine = executablePath + " " + commandLine;
-		char* fullCommandLinePtr = new char[fullCommandLine.length()+1];
-		strcpy(fullCommandLinePtr, fullCommandLine.c_str());
-
-		// Start the child process. 
-		if( !CreateProcessA( nullptr,  // No module name (use command line)
-			fullCommandLinePtr,		// Command line
-			nullptr,           // Process handle not inheritable
-			nullptr,           // Thread handle not inheritable
-			FALSE,          // Set handle inheritance to FALSE
-			0,              // No creation flags
-			nullptr,           // Use parent's environment block
-			nullptr,           // Use parent's starting directory 
-			&si,            // Pointer to STARTUPINFO structure
-			&pi )           // Pointer to PROCESS_INFORMATION structure
-			) 
-		{
-			MLIB_ERROR("CreateProcess failed");
-			return -1;
-		}
-		SAFE_DELETE_ARRAY(fullCommandLinePtr);
-
-		if(block)
-		{
-			// Wait until child process exits.
-			WaitForSingleObject( pi.hProcess, INFINITE );
-		}
-
-		// Close process and thread handles. 
-		CloseHandle( pi.hProcess );
-		CloseHandle( pi.hThread );
-		return 0;
-	}
-
-	void makeDirectory(const std::string &directory)
-	{
-		if (directoryExists(directory)) return;
-		const std::string dir = replace(directory,'\\', '/');
-		const std::vector<std::string> dirParts = split(dir, '/');
-		std::string soFar = startsWith(dir, "//") ? "//" : "";
-		for (const std::string& part : dirParts) {
-			soFar += part + "/";
-			CreateDirectoryA(soFar.c_str(), nullptr);
-		}
-	}
-
-    void deleteDirectory(const std::string& directory) {
-        if (directoryExists(directory)) {
-            Directory dir(directory);
-
-            for (const auto& f : dir.getFiles()) {
-                deleteFile(directory + "/" + f);
-            }
-            for (const auto& d : dir.getDirectories()) {
-                deleteDirectory(directory + "/" + d);
-            }
-            RemoveDirectoryA(directory.c_str());
-        }
-    }
-
-	// remove all files and subdirectories in directory, but do not delete it.
-	void clearDirectory(const std::string& directory) {
-		if (directoryExists(directory)) {
-			Directory dir(directory);
-
-			for (const auto& f : dir.getFiles()) {
-				deleteFile(directory + "/" + f);
-			}
-			for (const auto& d : dir.getDirectories()) {
-				deleteDirectory(directory + "/" + d);
-			}
-		}
-	}
-
-    void deleteFile(const std::string& file) {
-        DeleteFileA(file.c_str());
-    }
-
-	bool moveFile(const std::string& currentFile, const std::string& newFile) {
-		return (MoveFileA(currentFile.c_str(), newFile.c_str()) != 0);
-	}
-
-	bool directoryExists(const std::string& directory) {
-
-		DWORD ftyp = GetFileAttributesA(directory.c_str());
-		if (ftyp == INVALID_FILE_ATTRIBUTES)
-			return false;  //something is wrong with your path!
-
-		if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
-			return true;   // this is a directory!
-
-		return false;    // this is not a directory!
-	}
-
-	std::string getWorkingDirectory() {
-		char buffer[2048];
-		GetCurrentDirectoryA(2048, buffer);
-		return std::string(buffer);
-	}
-
-	bool setWorkingDirectory(const std::string& dir) {
-		BOOL res = SetCurrentDirectoryA(dir.c_str());
-		if (res == 0) return false;
-		else return true;
-	}
-
-	std::string getExecutablePath() {
-		HMODULE hModule = GetModuleHandleW(NULL);
-		CHAR path[MAX_PATH];
-		GetModuleFileNameA(hModule, path, MAX_PATH);		
-		return util::directoryFromPath(path);
-		//PathRemoveFileSpecA(path);
-		//return std::string(path);
-	}
-#endif
-
-#ifdef LINUX
 	void copyStringToClipboard(const std::string &S)
 	{
 
@@ -461,7 +280,29 @@ namespace util
 	{
 		mkdir(directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	}
-#endif
+	
+	bool directoryExists(const std::string& directory) {
+		const char *pzPath = directory.c_str();
+		DIR *pDir;
+		bool bExists = false;
+		pDir = opendir(pzPath);
+		if (pDir != NULL)
+		{
+			bExists = true;
+			(void)closedir(pDir);
+		}
+
+		return bExists;
+		// int state = access(directory.c_str(), F_OK | R_OK | W_OK);
+		// if (state == 0) return true;  // this is not a directory!
+		// else return false;    // this is not a directory!
+	}
+	void deleteFile(const std::string& file) {
+        std::remove(file.c_str());
+    }
+	
+	
+	
 }  // namespace util
 
 }  // namespace ml

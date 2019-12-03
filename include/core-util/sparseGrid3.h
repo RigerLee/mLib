@@ -8,7 +8,7 @@
 namespace std {
 
 template <>
-struct hash<ml::vec3i> {
+struct hash<ml::vec3i> : public std::unary_function<ml::vec3i, size_t> {
 	size_t operator()(const ml::vec3i& v) const {
 		//TODO larger prime number (64 bit) to match size_t
 		const size_t p0 = 73856093;
@@ -80,22 +80,7 @@ public:
 		return (*this)(i);
 	}
 
-#ifdef _WIN32
-	template<class U>
-#endif
 	friend std::ostream& operator<< <> (std::ostream& s, const SparseGrid3<T>& g);
-
-
-#ifdef _WIN32
-	template<class U, class V, class W>
-//#endif
-	friend BinaryDataStream<U,V>& operator>> <>(BinaryDataStream<U,V>& s, SparseGrid3<T>& g);
-//#ifdef _WIN32
-	template<class U, class V, class W>
-//#endif
-	friend BinaryDataStream<U,V>& operator<< <>(BinaryDataStream<U,V>& s, const SparseGrid3<T>& g);
-#endif
-
 
 	void writeBinaryDump(const std::string& s) const {
 		std::ofstream fout(s, std::ios::binary);

@@ -1,30 +1,9 @@
+#pragma once
 
 #ifndef CORE_BASE_COMMON_H_
 #define CORE_BASE_COMMON_H_
 
-#ifdef _WIN32
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-#ifndef _SCL_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
-#endif
-
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
-#define MLIB_OPENMP
-
-#define DEBUG_BREAK __debugbreak()
-
-#endif
-
-#ifdef LINUX
 #define DEBUG_BREAK assert(false)
-#endif
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
@@ -58,6 +37,7 @@
 #include <queue> 
 #include <random>
 #include <iomanip>
+#include <assert.h>
 
 
 namespace boost {
@@ -71,18 +51,12 @@ class access;
 namespace ml
 {
 
-#if defined (LINUX)
 #define __FUNCTION__ __func__
 #ifndef __LINE__
 #define __LINE__
 #endif
-#endif
 
-#ifndef _MSC_VER
 #define NOEXCEPT noexcept
-#else
-#define NOEXCEPT
-#endif
 
 class MLibException : public std::exception {
 public:
@@ -141,10 +115,6 @@ void assertFunctionMLIB(bool statement, const std::string &description);
 #define SAFE_RELEASE(p) { if (p) { p->Release();   (p)=nullptr; } }
 #endif
 
-#ifndef D3D_VALIDATE
-#define D3D_VALIDATE(statement) { HRESULT hr = statement;  if(FAILED(hr)) { throw MLIB_EXCEPTION(#statement); } }
-#endif
-
 }  // namespace ml
 
 
@@ -157,27 +127,15 @@ typedef unsigned char UCHAR;
 #endif
 
 #ifndef INT64
-#ifdef WIN32
-typedef __int64 INT64;
-#else
 typedef int64_t INT64;
-#endif
 #endif
 
 #ifndef UINT32
-#ifdef WIN32
-typedef unsigned __int32 UINT32;
-#else
 typedef uint32_t UINT32;
-#endif
 #endif
 
 #ifndef UINT64
-#ifdef WIN32
-typedef unsigned __int64 UINT64;
-#else
 typedef uint64_t UINT64;
-#endif
 #endif
 
 #ifndef FLOAT

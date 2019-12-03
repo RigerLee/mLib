@@ -9,8 +9,6 @@ class Timer {
 public:
 	Timer(bool _start = true) {
 		m_bRunning = false;
-		m_Start = 0.0;
-		m_Stop = 0.0;
 		if (_start) start();
 	}
 

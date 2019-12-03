@@ -98,6 +98,13 @@ public:
 		}
 		return system;
 	}
+	
+	static EigenSystem<FloatType> solve_default(const DenseMatrix<FloatType> &M) {
+		// (the tuple maps to indices)
+		typename std::tuple_element<TYPE_DEFAULT, std::tuple<EigenSolverNR<FloatType>, EigenSolverVTK<FloatType>, EigenSolverNR<FloatType>, EigenSolverEigen<FloatType> > >::type solver;
+		EigenSystem<FloatType> system = solver.eigenSystem(M);
+		return system;
+	}
 
     EigenSystem<FloatType> eigenSystem(const DenseMatrix<FloatType> &M) const
     {

@@ -869,7 +869,7 @@ public:
 	}
 
 	EigenSystem<FloatType> eigenSystem() const {
-		return EigenSolver<FloatType>::solve<EigenSolver<FloatType>::TYPE_DEFAULT>(*this);
+		return EigenSolver<FloatType>::solve_default(*this);
 	}
 
 	  union {
